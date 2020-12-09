@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <com.skyfishjy.library.RippleBackground
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".DelievererLocationTransmitter"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:background="@color/colorAccent"
+        android:layout_height="match_parent"
+        app:rb_color="@color/colorAccentLight"
+        app:rb_duration="3000"
+        app:rb_radius="32dp"
+        app:layout_constraintCircleRadius="100dp"
+        app:rb_rippleAmount="7"
+        app:rb_scale="6">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:background="@drawable/white_circle"
+            android:padding="5dp"
+            android:src="@drawable/marker"
+            app:layout_constraintBottom_toBottomOf="@+id/delivererBasedControls"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/address_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/white"
+            android:padding="5dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+
+        <LinearLayout
+            android:id="@+id/delivererBasedControls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/availabilityHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:background="@android:color/holo_red_light"
+                android:padding="10dp"
+                android:text="Your customer currently not available at place"
+                android:textColor="@android:color/white" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/canDeliveryBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="6"
+                    android:background="@android:color/black"
+                    android:onClick="cancelDelivery"
+                    android:padding="10dp"
+                    android:text="Cancel Delivery"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/confirmDelivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorAccent"
+                    android:onClick="endDelivery"
+                    android:text="Finish Delivery"
+                    android:textColor="@android:color/white" />
+            </TableRow>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.skyfishjy.library.RippleBackground>
+

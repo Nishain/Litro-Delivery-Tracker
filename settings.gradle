@@ -1,0 +1,2 @@
+rootProject.name='Litro Customer Logger'
+include ':app'
