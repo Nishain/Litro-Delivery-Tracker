@@ -1,16 +1,19 @@
 package com.ndds.litrocustomerlogger
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.TextView
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CallStateListener() : BroadcastReceiver() {
@@ -37,13 +40,16 @@ class CallStateListener() : BroadcastReceiver() {
                         addRequest(sharedPreference,recievedPhoneNumber,
                             result.getString("address")!!
                         )
-                        context.startActivity(
+                        Log.d("debug","should start the activity!!")
+                        popAddressDialog(context,recievedPhoneNumber,"somewhere")
+
+                        /*context.startActivity(
                             Intent(context,CustomerInfoPop::class.java).
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                    or Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_CLEAR_TOP).
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP).
                             putExtra("phone_number",recievedPhoneNumber)
-                                .putExtra("address", result.getString("address")!!))
+                                .putExtra("address", result.getString("address")!!))*/
                         Log.d("debug", result.get("address").toString())
+
                     }
                 }
 
@@ -75,5 +81,24 @@ class CallStateListener() : BroadcastReceiver() {
             serveList =  mutableSetOf()
         serveList.add("${phoneNumber}<.>${address}")
         sharedPreference.edit().putStringSet("serveList",serveList).commit()
+    }
+    private fun popAddressDialog(context:Context, phoneNumber: String, address: String){
+        val dialog = AlertDialog.Builder(context).setMessage("Hello world!").create()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dialog.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+        }else {
+            dialog.window?.setType(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY)
+            dialog.window?.addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            )
+        }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val viewGroup: ViewGroup = LayoutInflater.from(context).inflate(R.layout.activity_customer_info_pop,null) as ViewGroup
+        viewGroup.findViewById<TextView>(R.id.customerNumberHint).text = "call from $phoneNumber"
+        viewGroup.findViewById<TextView>(R.id.customerAddressHint).text = "from address $address"
+        dialog.setView(viewGroup)
+        dialog.show()
     }
 }

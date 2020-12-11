@@ -1,23 +1,23 @@
 package com.ndds.litrocustomerlogger
 
+import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity()  {
@@ -32,11 +32,19 @@ class MainActivity : AppCompatActivity()  {
         setContentView(R.layout.activity_main)
         initValues()
         requestPermission()
+
         findViewById<RadioGroup>(R.id.userType).setOnCheckedChangeListener{group,checkedID->
             val shouldEnabled:Boolean = checkedID==R.id.customer
             findViewById<EditText>(R.id.phone_number ).isEnabled = shouldEnabled
             findViewById<EditText>(R.id.address).isEnabled = shouldEnabled
         }
+
+        /*(getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).listen(object : PhoneStateListener() {
+            override fun onCallStateChanged(state: Int, incomingNumber: String) {
+                super.onCallStateChanged(state, incomingNumber)
+                println("incomingNumber : $incomingNumber")
+            }
+        }, PhoneStateListener.LISTEN_CALL_STATE)*/
     }
     fun test(v:View){
         startActivity(Intent(this,CustomerInfoPop::class.java))

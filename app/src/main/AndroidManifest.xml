@@ -3,10 +3,12 @@
     package="com.ndds.litrocustomerlogger">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +17,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DelievererLocationTransmitter"></activity>
+        <service
+            android:name=".CallInterceptorService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".DelievererLocationTransmitter" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,20 +40,20 @@
         <activity android:name=".ServeList" />
         <activity
             android:name=".CustomerInfoPop"
-            android:excludeFromRecents="true"
+            android:turnScreenOn="true"
             android:showWhenLocked="true"
             android:theme="@style/PopupTheme" />
 
-        <receiver
+       <!-- <receiver
             android:name=".CallStateListener"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

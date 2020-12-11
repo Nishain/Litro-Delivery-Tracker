@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="wrap_content"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_gravity="center">
+
     <ImageView
         android:layout_width="103dp"
         android:layout_height="106dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/white_circle"/>
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@drawable/white_circle" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
         android:background="@drawable/round_border"
         android:orientation="vertical"
@@ -37,12 +41,13 @@
 
         <TextView
             android:id="@+id/customerAddressHint"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="88dp"
-            android:layout_marginLeft="88dp"
+            android:layout_gravity="center_horizontal"
+
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal"
             android:text="from address"
             android:textColor="@android:color/black" />
 
@@ -54,5 +59,6 @@
         android:layout_height="88dp"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
+        android:src="@drawable/litro_icon"
         app:srcCompat="@drawable/litro_icon" />
 </FrameLayout>

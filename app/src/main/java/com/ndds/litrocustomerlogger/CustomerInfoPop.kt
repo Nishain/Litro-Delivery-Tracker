@@ -1,10 +1,10 @@
 package com.ndds.litrocustomerlogger
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
+import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
 
 class CustomerInfoPop : AppCompatActivity() {
     private var phoneNumber =  "1234567"//intent.getStringExtra("phone_number")
@@ -21,5 +21,10 @@ class CustomerInfoPop : AppCompatActivity() {
             "from address ${address}"
         )
     }
-
+    override fun onAttachedToWindow() {
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+        )
+    }
 }
