@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -84,17 +85,19 @@ class CallStateListener() : BroadcastReceiver() {
     }
     private fun popAddressDialog(context:Context, phoneNumber: String, address: String){
         val dialog = AlertDialog.Builder(context).setMessage("Hello world!").create()
+        val window = dialog.window!!
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            dialog.window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+            window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         }else {
-            dialog.window?.setType(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY)
-            dialog.window?.addFlags(
+            window.setType(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY)
+            window.addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                         or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
             )
         }
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window.setGravity(Gravity.TOP)
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val viewGroup: ViewGroup = LayoutInflater.from(context).inflate(R.layout.activity_customer_info_pop,null) as ViewGroup
         viewGroup.findViewById<TextView>(R.id.customerNumberHint).text = "call from $phoneNumber"
         viewGroup.findViewById<TextView>(R.id.customerAddressHint).text = "from address $address"

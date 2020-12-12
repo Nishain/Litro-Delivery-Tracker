@@ -1,10 +1,13 @@
 package com.ndds.litrocustomerlogger
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -27,6 +30,13 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         setContentView(R.layout.activity_delieverer_location_transmitter)
         findViewById<RippleBackground>(R.id.content).startRippleAnimation()
         phoneNumber = intent.getStringExtra("phoneNumber")!!
+        if((getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            AlertDialog.Builder(this).setTitle("Your GPS is off").setMessage("Turn on your GPS to share your location live with your customer.Would you enable it now?")
+                .setPositiveButton("Sure") { dialog, which ->
+                    dialog.dismiss()
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         findViewById<TextView>(R.id.address_hint).setText("sharing location with\n${phoneNumber}\nReach\n ${intent.getStringExtra("address")}")
         engageAvailabilityListener()

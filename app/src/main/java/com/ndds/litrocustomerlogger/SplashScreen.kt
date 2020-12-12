@@ -18,7 +18,10 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-        startService(Intent(this,CallInterceptorService::class.java))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(Intent(this,CallInterceptorService::class.java))
+        }else
+            startService(Intent(this,CallInterceptorService::class.java))
         val sharedPreferences = getSharedPreferences("localStorage", Context.MODE_PRIVATE)
         Handler(Looper.getMainLooper()).postDelayed({
             if(!sharedPreferences.contains("isUserCustomer"))

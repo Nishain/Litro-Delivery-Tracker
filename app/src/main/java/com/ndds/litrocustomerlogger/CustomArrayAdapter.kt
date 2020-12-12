@@ -58,12 +58,15 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:Array<St
                     }
             }
             R.id.dismiss->{
+                val removingItem = data[v.getTag(R.id.POSITION_KEY) as Int]
                 remove(v.getTag(R.id.POSITION_KEY) as Int)
+                onRemoveItem(removingItem)
                 notifyDataSetChanged()
             }
         }
 
     }
+    abstract fun onRemoveItem(removedItem:String)
     abstract fun onDataEmpty()
     fun remove( index: Int){
         if (index < 0 || index >= data. size) {

@@ -39,6 +39,16 @@ class ServeList : AppCompatActivity() {
                 )
             }
 
+            override fun onRemoveItem(removedItem: String) {
+                for(d in dataList){
+                    if(d==removedItem){
+                        dataList.remove(d)
+                        sharedPreference.edit().putStringSet("serveList",dataList).apply()
+                        break
+                    }
+                }
+            }
+
             override fun onDataEmpty() {
                 findViewById<ViewGroup>(R.id.dataListContainer).visibility = View.GONE
             }

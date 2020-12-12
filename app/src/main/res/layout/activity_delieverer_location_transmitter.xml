@@ -39,6 +39,7 @@
             android:background="@android:color/white"
             android:padding="5dp"
             android:text="TextView"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView8" />
@@ -59,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:background="@android:color/holo_red_light"
+                android:background="@android:color/black"
                 android:padding="10dp"
                 android:text="Your customer currently not available at place"
                 android:textColor="@android:color/white" />
@@ -79,7 +80,8 @@
                     android:onClick="cancelDelivery"
                     android:padding="10dp"
                     android:text="Cancel Delivery"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="@android:color/holo_red_light" />
 
                 <Button
                     android:id="@+id/confirmDelivery"
@@ -90,7 +92,8 @@
                     android:background="@color/colorAccent"
                     android:onClick="endDelivery"
                     android:text="Finish Delivery"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/black"
+                    app:backgroundTint="@android:color/white" />
             </TableRow>
 
         </LinearLayout>
