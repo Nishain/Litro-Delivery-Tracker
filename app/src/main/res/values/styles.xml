@@ -25,5 +25,6 @@
     <style name="PopupTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>

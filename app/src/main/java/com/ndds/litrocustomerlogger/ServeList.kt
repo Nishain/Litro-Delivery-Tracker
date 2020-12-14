@@ -1,9 +1,13 @@
 package com.ndds.litrocustomerlogger
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -22,10 +26,12 @@ class ServeList : AppCompatActivity() {
     private lateinit var adapter: CustomArrayAdapter
     private lateinit var currentPhoneNumber:String
     private lateinit var currentAddress:String
+    private lateinit var sharedPreference:SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_serve_list)
-        var sharedPreference = getSharedPreferences("localStorage", MODE_PRIVATE);
+        sharedPreference = getSharedPreferences("localStorage", MODE_PRIVATE);
+
        dataList= sharedPreference.getStringSet("serveList", mutableSetOf<String>())!!
         dataList.add("0770665281<.>elliotroad")
         dataList.add("0770665251<.>elliotroad")
@@ -49,6 +55,8 @@ class ServeList : AppCompatActivity() {
             }
 
             override fun onRemoveItem(removedItem: String) {
+
+
                 for(d in dataList){
                     if(d==removedItem){
                         dataList.remove(d)
@@ -76,6 +84,23 @@ class ServeList : AppCompatActivity() {
         startActivity(Intent(this,MainActivity::class.java))
     }
 
+    override fun onResume() {
+        Log.d("debug","onresuem-worked${sharedPreference.getBoolean("lockScreenPopError",false)}")
+
+        if(sharedPreference.contains("lockScreenPopError") && sharedPreference.getBoolean("lockScreenPopError",false)){
+            AlertDialog.Builder(this@ServeList).setTitle("Some necessary permissions are missing")
+                .setMessage("Some additional permission.Unfortunately we can set those permission automatically.You go to settings and enable other permissions")
+                .setPositiveButton("Go to settings") { dialog, which ->
+                    sharedPreference.edit().remove("lockScreenPopError").apply()
+                    val intent = Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:" + getPackageName())
+                    )
+                    startActivity(intent)
+                }.show()
+        }
+        super.onResume()
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode==Activity.RESULT_OK) {

@@ -1,6 +1,6 @@
 package com.ndds.litrocustomerlogger
 
-import android.app.AlertDialog
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,6 +8,8 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.Gravity
@@ -15,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.google.gson.Gson
@@ -40,21 +43,37 @@ class CallStateListener() : BroadcastReceiver() {
                     sharedPreference.edit().putBoolean("didRang",true).commit()
                     Log.d("the phone",recievedPhoneNumber)
                     db.collection("customer").whereArrayContains("simNumbers",recievedPhoneNumber).limit(1).get().addOnSuccessListener { result ->
-                        if(result.isEmpty() || result.documents[0].contains("address"))
+                        if(result.isEmpty() || !result.documents[0].contains("address"))
                             return@addOnSuccessListener
                         val document = result.documents[0]
+                        val address = document.getString("address")
                         addRequest(sharedPreference,recievedPhoneNumber,
-                            document.getString("address")!!
+                            address!!
                         )
                         Log.d("debug","should start the activity!!")
-                        popAddressDialog(context,recievedPhoneNumber,"somewhere")
+                        val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                        if(keyguardManager.isKeyguardLocked()) {
+                            sharedPreference.edit().putInt("lockScreenPopupState", 1).apply()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                if (sharedPreference.getInt("lockScreenPopupState", 0) != 2)
+                                    sharedPreference.edit().putBoolean("lockScreenPopError", true).apply()
+                            }, 5000)
+                            context.startActivity(
+                                Intent(context, CustomerInfoPop::class.java)
+                                    .putExtra("phone_number", recievedPhoneNumber)
+                                    .putExtra("address", address)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            )
+                        }
+                        else
+                        popAddressDialog(context,recievedPhoneNumber,address)
 
                         /*context.startActivity(
                             Intent(context,CustomerInfoPop::class.java).
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP).
                             putExtra("phone_number",recievedPhoneNumber)
                                 .putExtra("address", result.getString("address")!!))*/
-                        Log.d("debug",document.getString("address")!!)
+                        Log.d("debug",address)
 
                     }
                 }
@@ -93,6 +112,23 @@ class CallStateListener() : BroadcastReceiver() {
             serveList =  mutableSetOf()
         serveList.add("${phoneNumber}<.>${address}")
         sharedPreference.edit().putStringSet("serveList",serveList).commit()
+    }
+    private fun popFullScreenNotification(context: Context){
+        val notificationManager = context.getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager
+        var builder: NotificationCompat.Builder
+        val notificationID = "Call Interceptor Service"
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O)
+            builder =  NotificationCompat.Builder(context, notificationID)
+        else
+            builder = NotificationCompat.Builder(context)
+            val notification = builder
+                .setContentTitle(context.getString(R.string.app_name))
+                .setSmallIcon(R.drawable.litro_icon)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setFullScreenIntent(PendingIntent.getActivity(context,456,Intent(context,CustomerInfoPop::class.java),PendingIntent.FLAG_UPDATE_CURRENT),true)
+                .setContentText("You might have received deliverer order from customer").build()
+        notificationManager.notify(20,notification)
     }
     private fun popAddressDialog(context:Context, phoneNumber: String, address: String){
         val dialog = AlertDialog.Builder(context).setMessage("Hello world!").create()

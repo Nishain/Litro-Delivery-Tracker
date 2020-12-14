@@ -8,11 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
-import android.telephony.TelephonyManager
-import android.util.JsonReader
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -24,9 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -145,6 +139,7 @@ class MainActivity : AppCompatActivity()  {
             }
         }
     }
+    @SuppressLint("MissingPermission")
     fun initValues(){
 
         val storage = getSharedPreferences("localStorage", Context.MODE_PRIVATE)
@@ -153,11 +148,16 @@ class MainActivity : AppCompatActivity()  {
         if(!isUserCustomer)
             findViewById<ViewGroup>(R.id.customerControls).visibility = View.GONE
         else{
-            val JSONArray = JSONArray(storage.getString("phone number", arrayOf("''").asList().toString()))
+            val jsonArray = JSONArray(storage.getString("phone number",
+                (if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
+                    (getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager)
+                        .activeSubscriptionInfoList.map { info -> "'Sim ${info.displayName}'" } as List<String>
+                else
+                    listOf("Primary Number")).toTypedArray().contentToString()))
             val phoneNumberContainer = findViewById<ViewGroup>(R.id.simPhoneNumberGroup)
             phoneNumberContainer.removeAllViews()
-            for (i in 0 until JSONArray.length()){
-                addSimPhoneNumber(phoneNumberContainer,JSONArray.getString(i))
+            for (i in 0 until jsonArray.length()){
+                addSimPhoneNumber(phoneNumberContainer,jsonArray.getString(i))
             }
         }
         val fields = if(isUserCustomer) customerFields else delivererFields
@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity()  {
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.READ_CALL_LOG,
+            android.Manifest.permission.FOREGROUND_SERVICE,
             android.Manifest.permission.READ_PHONE_STATE)
         val missingPermission = ArrayList<String>()
         for (permission in permissions)
@@ -186,11 +187,14 @@ class MainActivity : AppCompatActivity()  {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Show alert dialog to the user saying a separate permission is needed
             // Launch the settings activity if the user prefers
+
+            startActivityForResult(intent, 123)
             if(!Settings.canDrawOverlays(this)){
                 val intent = Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName())
                 )
+
                 startActivityForResult(intent, 123)
             }
         }

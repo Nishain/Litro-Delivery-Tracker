@@ -1,6 +1,10 @@
 package com.ndds.litrocustomerlogger
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
+import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +16,16 @@ class CustomerInfoPop : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_customer_info_pop)
+        getSharedPreferences("localStorage", Context.MODE_PRIVATE)
+            .edit().putInt("lockScreenPopupState", 2).apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+        }
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        )
+        //window.setGravity(Gravity.TOP)
         phoneNumber = intent.getStringExtra("phone_number").toString()
         address = intent.getStringExtra("address").toString()
         findViewById<TextView>(R.id.customerNumberHint).setText(
@@ -21,10 +35,5 @@ class CustomerInfoPop : AppCompatActivity() {
             "from address ${address}"
         )
     }
-    override fun onAttachedToWindow() {
-        window.addFlags(
-            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-        )
-    }
+
 }
