@@ -1,5 +1,6 @@
 package com.ndds.litrocustomerlogger
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
@@ -15,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.skyfishjy.library.RippleBackground
@@ -25,6 +27,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
     private lateinit  var customerAvailabilityListener: ListenerRegistration
     private lateinit  var phoneNumber:String
     var db : FirebaseFirestore = FirebaseFirestore.getInstance()
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delieverer_location_transmitter)
@@ -38,7 +41,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
                 }
         }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        findViewById<TextView>(R.id.address_hint).setText("sharing location with\n${phoneNumber}\nReach\n ${intent.getStringExtra("address")}")
+        findViewById<TextView>(R.id.address_hint).setText("sharing location with\n${intent.getStringExtra("callingPhoneNumber")}\nReach\n ${intent.getStringExtra("address")}")
         engageAvailabilityListener()
     }
     fun engageAvailabilityListener(){
@@ -65,7 +68,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
     }
     fun endDelivery(v:View){
         db.document("customer/$phoneNumber").update("proccessCode",2)
-        setResult(Activity.RESULT_OK, Intent().putExtra("removingPhoneNumber",phoneNumber))
+        setResult(Activity.RESULT_OK, Intent())
         val dialog = displayDeliveryCompletionMessage(getString(R.string.DelivererCompletionMessage))
         dialog.setOnDismissListener{dialog: DialogInterface? ->
             finish()
@@ -76,7 +79,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         db.document("customer/$phoneNumber").update("proccessCode",0)
             .addOnSuccessListener { result->
                 Toast.makeText(this,"Delivery is successfully cancelled", Toast.LENGTH_SHORT).show()
-                setResult(Activity.RESULT_OK,Intent().putExtra("removingPhoneNumber",phoneNumber))
+                setResult(Activity.RESULT_OK,Intent())
                 finish()
             }
     }
@@ -113,4 +116,5 @@ class DelievererLocationTransmitter : AppCompatActivity() {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         super.onDestroy()
     }
+
 }

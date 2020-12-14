@@ -16,12 +16,16 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
+import com.google.gson.Gson
+import org.json.JSONArray
+import org.json.JSONObject
 
 class CallStateListener() : BroadcastReceiver() {
     val db = FirebaseFirestore.getInstance()
     override fun onReceive(context: Context, intent: Intent) {
         val sharedPreference = context.getSharedPreferences("localStorage", Context.MODE_PRIVATE)
-        val phonenumber = sharedPreference.getString("phone number",null)
+        val phonenumbers = sharedPreference.getString("phone number",null)
         val isUserCustomer = sharedPreference.getBoolean("isUserCustomer",true)
         val address = if(isUserCustomer)sharedPreference.getString("address",null) else null
         var didRang = sharedPreference.getBoolean("didRang",false)
@@ -35,11 +39,12 @@ class CallStateListener() : BroadcastReceiver() {
                     Log.d("debug","start lookup")
                     sharedPreference.edit().putBoolean("didRang",true).commit()
                     Log.d("the phone",recievedPhoneNumber)
-                    db.document("customer/${recievedPhoneNumber}").get().addOnSuccessListener { result ->
-                        if(!result.contains("address"))
+                    db.collection("customer").whereArrayContains("simNumbers",recievedPhoneNumber).limit(1).get().addOnSuccessListener { result ->
+                        if(result.isEmpty() || result.documents[0].contains("address"))
                             return@addOnSuccessListener
+                        val document = result.documents[0]
                         addRequest(sharedPreference,recievedPhoneNumber,
-                            result.getString("address")!!
+                            document.getString("address")!!
                         )
                         Log.d("debug","should start the activity!!")
                         popAddressDialog(context,recievedPhoneNumber,"somewhere")
@@ -49,11 +54,10 @@ class CallStateListener() : BroadcastReceiver() {
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP).
                             putExtra("phone_number",recievedPhoneNumber)
                                 .putExtra("address", result.getString("address")!!))*/
-                        Log.d("debug", result.get("address").toString())
+                        Log.d("debug",document.getString("address")!!)
 
                     }
                 }
-
             }
 
 
@@ -61,11 +65,18 @@ class CallStateListener() : BroadcastReceiver() {
                     val outGoingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
                 Log.d("debug","off rook ran")
                 if(isUserCustomer && outGoingNumber!=null && !didRang) { // this is outgoing call
-                    Log.d("debug","update database")
-                    db.document("customer/${phonenumber}").set(
+                    Log.d("debug","update database - $phonenumbers")
+                    val JSONphoneNumbers = JSONArray(phonenumbers)
+                    val arrayList = ArrayList<String>()
+                    for (i in 0 until JSONphoneNumbers.length())
+                        arrayList.add(JSONphoneNumbers.getString(i))
+                    val phoneNumberID = JSONphoneNumbers.getString(0)!!
+
+                    db.document("customer/$phoneNumberID").set(
                         hashMapOf(
                             "address" to address,
-                            "isAvailable" to true
+                            "isAvailable" to true,
+                            "simNumbers" to arrayList.toTypedArray().toList()
                         )
                     )
                 }

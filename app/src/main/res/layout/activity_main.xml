@@ -24,102 +24,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="537dp"
-            android:layout_marginTop="66dp"
-            android:background="@android:color/white"
-            android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/textView12"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="70dp"
-                android:text="Your Profile"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="Your Nickname" />
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/My.TextInputLayout.FilledBox.Padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                app:endIconMode="clear_text"
-                app:hintEnabled="false">
-
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Your Nickname"
-                    android:inputType="textPersonName"
-                    android:textSize="18sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Who are you?" />
-
-            <RadioGroup
-                android:id="@+id/userType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="7dp">
-
-                <RadioButton
-                    android:id="@+id/customer"
-                    android:layout_width="110dp"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Customer" />
-
-                <RadioButton
-                    android:id="@+id/deliverer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Delivery man" />
-
-            </RadioGroup>
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Enter phone number" />
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_marginTop="66dp"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/textView12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center"
+                    android:text="Your Profile"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="20sp" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+94"
-                    android:textSize="18sp" />
+                    android:gravity="center_vertical"
+                    android:text="Your Nickname" />
+
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/phone_number_container"
                     style="@style/My.TextInputLayout.FilledBox.Padding"
-                    android:layout_width="225dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     app:endIconMode="clear_text"
@@ -127,78 +64,154 @@
 
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/phone_number"
+                        android:id="@+id/username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="phone number"
-                        android:inputType="phone"
+                        android:hint="Your Nickname"
+                        android:inputType="textPersonName"
                         android:textSize="18sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-            </TableRow>
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="Who are you?" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Your Home address" />
+                <RadioGroup
+                    android:id="@+id/userType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="7dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/My.TextInputLayout.FilledBox.Padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                app:endIconMode="clear_text"
-                app:hintEnabled="false">
+                    <RadioButton
+                        android:id="@+id/customer"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Customer" />
 
+                    <RadioButton
+                        android:id="@+id/deliverer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Delivery man" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/address"
+                </RadioGroup>
+
+                <LinearLayout
+                    android:id="@+id/customerControls"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="Your Address"
-                    android:inputType="textPostalAddress"
-                    android:singleLine="false"
-                    android:textSize="18sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp">
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:onClick="test"
-                    android:text="test" />
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="Enter phone number(s)" />
 
-                <Button
-                    android:id="@+id/button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@color/colorAccent"
-                    android:onClick="saveNumber"
-                    android:text="Save"
-                    android:textColor="@android:color/white" />
+                    <LinearLayout
+                        android:id="@+id/simPhoneNumberGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
-                <Button
-                    android:id="@+id/button2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:onClick="test2"
-                    android:text="test 2" />
-            </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
 
-            <!--<EditText
+                        <View
+                            android:id="@+id/divider2"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/black" />
+
+                        <Button
+                            android:id="@+id/addSimNumberBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="7dp"
+                            android:layout_marginRight="7dp"
+                            android:text="add Another Number" />
+
+                        <View
+                            android:id="@+id/divider3"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/black" />
+                    </TableRow>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your Home address" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/My.TextInputLayout.FilledBox.Padding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="false">
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="Your Address"
+                            android:inputType="textPostalAddress"
+                            android:singleLine="false"
+                            android:textSize="18sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp">
+
+                    <Button
+                        android:id="@+id/button3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:onClick="test"
+                        android:text="test" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/colorAccent"
+                        android:onClick="saveNumber"
+                        android:text="Save"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/button2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:onClick="test2"
+                        android:text="test 2" />
+                </TableRow>
+
+                <!--<EditText
                 android:id="@+id/username_container"
                 android:layout_width="202dp"
                 android:layout_height="47dp"
@@ -214,7 +227,8 @@
                 app:layout_constraintStart_toEndOf="@+id/textView8"
                 app:layout_constraintTop_toTopOf="parent" />-->
 
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <ImageView
             android:id="@+id/imageView"

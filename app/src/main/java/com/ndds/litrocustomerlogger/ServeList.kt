@@ -11,11 +11,13 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_customer_home.*
 import kotlinx.android.synthetic.main.row_layout.*
 
 class ServeList : AppCompatActivity() {
 
+    private lateinit var launchIntent: Intent
     private lateinit var dataList: MutableSet<String>
     private lateinit var adapter: CustomArrayAdapter
     private lateinit var currentPhoneNumber:String
@@ -33,10 +35,17 @@ class ServeList : AppCompatActivity() {
             override fun onNavigateToMap(phoneNumber: String,address:String) {
                 currentPhoneNumber = phoneNumber
                 currentAddress = address
-                startActivityForResult(
-                    Intent(context,DelievererLocationTransmitter::class.java)
-                        .putExtra("phoneNumber",phoneNumber).putExtra("address",address),456
-                )
+                FirebaseFirestore.getInstance().collection("customer").whereArrayContains("simNumbers",phoneNumber).limit(1).get().addOnSuccessListener { result ->
+                    if(!result.isEmpty) {
+                        launchIntent = Intent(context,DelievererLocationTransmitter::class.java)
+                            .putExtra("phoneNumber",result.documents[0].id)
+                            .putExtra("address",address)
+                            .putExtra("callingPhoneNumber",phoneNumber)
+                        startActivityForResult(launchIntent,456)
+                    }else
+                        Toast.makeText(this@ServeList,"Could not find customer phone number in system!",Toast.LENGTH_LONG).show()
+                }
+
             }
 
             override fun onRemoveItem(removedItem: String) {
@@ -55,12 +64,13 @@ class ServeList : AppCompatActivity() {
         }
         findViewById<Button>(R.id.backToTaskBtn).setOnClickListener { v->
             startActivityForResult(
-                Intent(this,DelievererLocationTransmitter::class.java)
-                    .putExtra("phoneNumber",currentPhoneNumber).putExtra("address",currentAddress),456
+                getLaunchIntent(),456
             )
         }
         findViewById<ListView>(R.id.serveList).adapter = adapter
-
+    }
+    fun getLaunchIntent():Intent{
+        return launchIntent
     }
     fun editProfile(v: View){
         startActivity(Intent(this,MainActivity::class.java))
@@ -70,17 +80,14 @@ class ServeList : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode==Activity.RESULT_OK) {
             findViewById<Button>(R.id.backToTaskBtn).visibility = View.GONE
-            val removingPhoneNumber = data?.getStringExtra("removingPhoneNumber")
-            if(removingPhoneNumber!=null) {
                 for (data in dataList) {
-                    if (data.split("<.>")[0] == removingPhoneNumber) {
+                    if (data.split("<.>")[0] == currentPhoneNumber) {
                         dataList.remove(data)
                         break
                     }
                 }
                 adapter.refreshData(dataList.toTypedArray())
                 findViewById<ListView>(R.id.serveList).adapter = adapter
-            }
         }else
             findViewById<Button>(R.id.backToTaskBtn).visibility = View.VISIBLE
     }
