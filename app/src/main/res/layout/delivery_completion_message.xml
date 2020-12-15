@@ -37,6 +37,7 @@
             android:background="?android:attr/listDivider" />
 
         <Button
+            android:id="@+id/finish_Btn"
             android:layout_width="90dp"
             android:layout_height="38dp"
             android:layout_gravity="center_horizontal"

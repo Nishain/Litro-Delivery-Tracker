@@ -54,10 +54,6 @@ class CallStateListener() : BroadcastReceiver() {
                         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
                         if(keyguardManager.isKeyguardLocked()) {
                             sharedPreference.edit().putInt("lockScreenPopupState", 1).apply()
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                if (sharedPreference.getInt("lockScreenPopupState", 0) != 2)
-                                    sharedPreference.edit().putBoolean("lockScreenPopError", true).apply()
-                            }, 5000)
                             context.startActivity(
                                 Intent(context, CustomerInfoPop::class.java)
                                     .putExtra("phone_number", recievedPhoneNumber)

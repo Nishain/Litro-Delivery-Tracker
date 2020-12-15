@@ -43,6 +43,7 @@ class ServeList : AppCompatActivity() {
                 currentAddress = address
                 FirebaseFirestore.getInstance().collection("customer").whereArrayContains("simNumbers",phoneNumber).limit(1).get().addOnSuccessListener { result ->
                     if(!result.isEmpty) {
+                        Log.d("debug","the phonenumber ID ${result.documents[0].id}")
                         launchIntent = Intent(context,DelievererLocationTransmitter::class.java)
                             .putExtra("phoneNumber",result.documents[0].id)
                             .putExtra("address",address)
@@ -87,11 +88,11 @@ class ServeList : AppCompatActivity() {
     override fun onResume() {
         Log.d("debug","onresuem-worked${sharedPreference.getBoolean("lockScreenPopError",false)}")
 
-        if(sharedPreference.contains("lockScreenPopError") && sharedPreference.getBoolean("lockScreenPopError",false)){
+        if(sharedPreference.contains("lockScreenPopupState") && sharedPreference.getInt("lockScreenPopupState",0)!=2){
             AlertDialog.Builder(this@ServeList).setTitle("Some necessary permissions are missing")
                 .setMessage("Some additional permission.Unfortunately we can set those permission automatically.You go to settings and enable other permissions")
                 .setPositiveButton("Go to settings") { dialog, which ->
-                    sharedPreference.edit().remove("lockScreenPopError").apply()
+                    sharedPreference.edit().remove("lockScreenPopupState").apply()
                     val intent = Intent(
                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         Uri.parse("package:" + getPackageName())

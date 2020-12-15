@@ -1,5 +1,6 @@
 package com.ndds.litrocustomerlogger
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.SubscriptionManager
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -101,22 +103,7 @@ class MainActivity : AppCompatActivity()  {
 
             storage.edit().putString(e.value,editText.text.toString()).apply()
         }
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            val subscriptionInfoList =
-                getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
 
-            val subscriptionInformations = subscriptionInfoList.getActiveSubscriptionInfoList()
-
-            if (subscriptionInformations != null && subscriptionInformations.size > 0) {
-                for (info in subscriptionInformations) {
-                    info.simSlotIndex
-                    val carrierName = info.carrierName.toString()
-                    val mobileNo = info.number
-                    val countyIso = info.countryIso
-                    val dataRoaming = info.dataRoaming
-                }
-            }
-        }*/
         storage.edit().putBoolean("isUserCustomer",isUserCustomer).apply()
         Toast.makeText(this,"saved settings!",Toast.LENGTH_SHORT).show()
         navigateToMainScreen()
@@ -127,10 +114,15 @@ class MainActivity : AppCompatActivity()  {
             .setTitle("Some of the fields are empty")
             .setIcon(R.drawable.error).show()
     }
-    fun addSimPhoneNumber(phoneNumberContainer:ViewGroup, initialNumber:String){
+    fun addSimPhoneNumber(phoneNumberContainer:ViewGroup, initialNumber:String,isHint:Boolean = false){
+        if(isHint)
+            Log.d("Debig","hint added!")
         val simRow = layoutInflater.inflate(R.layout.sim_phonenumber_row,null) as ViewGroup
         phoneNumberContainer.addView(simRow)
-        simRow.findViewById<EditText>(R.id.phone_number).setText(initialNumber)
+        if(isHint)
+            simRow.findViewById<EditText>(R.id.phone_number).setHint(initialNumber)
+        else
+            simRow.findViewById<EditText>(R.id.phone_number).setText(initialNumber)
         if(phoneNumberContainer.childCount==1)
             simRow.findViewById<View>(R.id.removeNumber).visibility = View.GONE
         else{
@@ -148,18 +140,18 @@ class MainActivity : AppCompatActivity()  {
         if(!isUserCustomer)
             findViewById<ViewGroup>(R.id.customerControls).visibility = View.GONE
         else{
-            val jsonArray = JSONArray(storage.getString("phone number",
-                (if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
-                    (getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager)
-                        .activeSubscriptionInfoList.map { info -> "'Sim ${info.displayName}'" } as List<String>
-                else
-                    listOf("Primary Number")).toTypedArray().contentToString()))
+            val jsonArray = JSONArray(storage.getString("phone number","[]"))
             val phoneNumberContainer = findViewById<ViewGroup>(R.id.simPhoneNumberGroup)
-            phoneNumberContainer.removeAllViews()
+
+            if (jsonArray.length()==0){
+                createEmptyPhoneNumberFields(phoneNumberContainer)
+            }
+
             for (i in 0 until jsonArray.length()){
                 addSimPhoneNumber(phoneNumberContainer,jsonArray.getString(i))
             }
         }
+
         val fields = if(isUserCustomer) customerFields else delivererFields
         fields.map { e->
             /*if(e.key==R.id.phone_number)
@@ -175,14 +167,14 @@ class MainActivity : AppCompatActivity()  {
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.READ_CALL_LOG,
-            android.Manifest.permission.FOREGROUND_SERVICE,
             android.Manifest.permission.READ_PHONE_STATE)
         val missingPermission = ArrayList<String>()
         for (permission in permissions)
             if(ContextCompat.checkSelfPermission(this,permission)!=PackageManager.PERMISSION_GRANTED)
                 missingPermission.add(permission)
         if(missingPermission.size>0)
-            ActivityCompat.requestPermissions(this,missingPermission.toTypedArray(),123)
+            ActivityCompat.requestPermissions(
+                this,missingPermission.toTypedArray(),123)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Show alert dialog to the user saying a separate permission is needed
@@ -198,5 +190,35 @@ class MainActivity : AppCompatActivity()  {
                 startActivityForResult(intent, 123)
             }
         }
+
     }
+    fun createEmptyPhoneNumberFields(phoneNumberContainer: ViewGroup){
+        phoneNumberContainer.removeAllViews()
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1 &&
+            ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE)==PackageManager.PERMISSION_GRANTED) {
+            (getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager)
+                .activeSubscriptionInfoList.forEach { info ->
+                    addSimPhoneNumber(
+                        phoneNumberContainer,
+                        "Sim ${info.displayName} number",
+                        true
+                    )
+                }
+        }
+        else
+            addSimPhoneNumber(phoneNumberContainer,"Primary Number",true)
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissions.forEach { p->
+            if(p.equals(android.Manifest.permission.READ_PHONE_STATE) && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                createEmptyPhoneNumberFields(findViewById(R.id.simPhoneNumberGroup))
+            }
+        }
+    }
+
 }

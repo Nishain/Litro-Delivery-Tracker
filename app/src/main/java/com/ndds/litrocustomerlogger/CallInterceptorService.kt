@@ -49,7 +49,7 @@ class CallInterceptorService : Service() {
         else
             builder = NotificationCompat.Builder(this)
         val notification: Notification =  builder
-            .setSmallIcon(R.drawable.litro_icon)
+            .setSmallIcon(R.drawable.gas_cylinder)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.notificationBody))
             .addAction(android.R.drawable.ic_delete,"Delete", PendingIntent.getService(this,234,

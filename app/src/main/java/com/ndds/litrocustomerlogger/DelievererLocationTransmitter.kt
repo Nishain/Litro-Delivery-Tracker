@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -24,27 +25,20 @@ import com.skyfishjy.library.RippleBackground
 class DelievererLocationTransmitter : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var locationCallback: LocationCallback? = null
-    private lateinit  var customerAvailabilityListener: ListenerRegistration
+    private  var customerAvailabilityListener: ListenerRegistration?=null
     private lateinit  var phoneNumber:String
     var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delieverer_location_transmitter)
-        findViewById<RippleBackground>(R.id.content).startRippleAnimation()
         phoneNumber = intent.getStringExtra("phoneNumber")!!
-        if((getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            AlertDialog.Builder(this).setTitle("Your GPS is off").setMessage("Turn on your GPS to share your location live with your customer.Would you enable it now?")
-                .setPositiveButton("Sure") { dialog, which ->
-                    dialog.dismiss()
-                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                }
-        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         findViewById<TextView>(R.id.address_hint).setText("sharing location with\n${intent.getStringExtra("callingPhoneNumber")}\nReach\n ${intent.getStringExtra("address")}")
         engageAvailabilityListener()
     }
     fun engageAvailabilityListener(){
+        if(customerAvailabilityListener==null)
         customerAvailabilityListener = db.document("customer/$phoneNumber").addSnapshotListener{ snapshot, e ->
             if(!snapshot?.contains("isAvailable")!! || !snapshot?.getBoolean("isAvailable")!!)
                 findViewById<View>(R.id.availabilityHint).visibility = View.VISIBLE
@@ -53,8 +47,10 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         }
     }
     fun disengageAvailabilityListener(){
-        if(customerAvailabilityListener!=null)
-            customerAvailabilityListener.remove()
+        if(customerAvailabilityListener!=null) {
+            customerAvailabilityListener!!.remove()
+            customerAvailabilityListener = null
+        }
     }
 
     override fun onPause() {
@@ -70,6 +66,9 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         db.document("customer/$phoneNumber").update("proccessCode",2)
         setResult(Activity.RESULT_OK, Intent())
         val dialog = displayDeliveryCompletionMessage(getString(R.string.DelivererCompletionMessage))
+        dialog.findViewById<Button>(R.id.finish_Btn)?.setOnClickListener {
+            finish()
+        }
         dialog.setOnDismissListener{dialog: DialogInterface? ->
             finish()
         }
@@ -89,6 +88,17 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         return AlertDialog.Builder(this).setView(viewGroup).create()
     }
     override fun onResume() {
+        if(!(getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            findViewById<RippleBackground>(R.id.content).stopRippleAnimation()
+            AlertDialog.Builder(this).setTitle("Your GPS is off")
+                .setMessage("Turn on your GPS to share your location live with your customer.Would you enable it now?")
+                .setPositiveButton("Sure") { dialog, which ->
+                    dialog.dismiss()
+                    findViewById<RippleBackground>(R.id.content).startRippleAnimation()
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }.show()
+        }else
+            findViewById<RippleBackground>(R.id.content).startRippleAnimation()
         if( locationCallback != null)
             return
         engageAvailabilityListener()
@@ -101,7 +111,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
                 locationResult ?: return
                 disengageAvailabilityListener()
                 val lastPosition = LatLng(locationResult.lastLocation.latitude,locationResult.lastLocation.longitude)
-                db.document("customer/${intent.getStringExtra("phoneNumber")}")
+                db.document("customer/$phoneNumber")
                     .update("delivererLocation", lastPosition
                     ).addOnCompleteListener { result-> engageAvailabilityListener()}
             }}
