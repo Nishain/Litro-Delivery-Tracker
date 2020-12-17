@@ -33,8 +33,6 @@ class ServeList : AppCompatActivity() {
         sharedPreference = getSharedPreferences("localStorage", MODE_PRIVATE);
 
        dataList= sharedPreference.getStringSet("serveList", mutableSetOf<String>())!!
-        dataList.add("0770665281<.>elliotroad")
-        dataList.add("0770665251<.>elliotroad")
         val username = sharedPreference.getString("username","stranger")
         findViewById<TextView>(R.id.welcomeHint).setText("Welcome ${username?.capitalize()}")
         adapter  = object:CustomArrayAdapter(this,R.layout.row_layout,dataList.toTypedArray()){
@@ -56,8 +54,6 @@ class ServeList : AppCompatActivity() {
             }
 
             override fun onRemoveItem(removedItem: String) {
-
-
                 for(d in dataList){
                     if(d==removedItem){
                         dataList.remove(d)
@@ -86,19 +82,9 @@ class ServeList : AppCompatActivity() {
     }
 
     override fun onResume() {
-        Log.d("debug","onresuem-worked${sharedPreference.getBoolean("lockScreenPopError",false)}")
 
         if(sharedPreference.contains("lockScreenPopupState") && sharedPreference.getInt("lockScreenPopupState",0)!=2){
-            AlertDialog.Builder(this@ServeList).setTitle("Some necessary permissions are missing")
-                .setMessage("Some additional permission.Unfortunately we can set those permission automatically.You go to settings and enable other permissions")
-                .setPositiveButton("Go to settings") { dialog, which ->
-                    sharedPreference.edit().remove("lockScreenPopupState").apply()
-                    val intent = Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse("package:" + getPackageName())
-                    )
-                    startActivity(intent)
-                }.show()
+            PopupEngine().askAdditionalPermissions(this,sharedPreference)
         }
         super.onResume()
     }

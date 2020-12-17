@@ -63,19 +63,16 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         finish()
     }
     fun endDelivery(v:View){
-        db.document("customer/$phoneNumber").update("proccessCode",2)
+        db.document("customer/$phoneNumber").update("processCode",0)
         setResult(Activity.RESULT_OK, Intent())
         val dialog = displayDeliveryCompletionMessage(getString(R.string.DelivererCompletionMessage))
-        dialog.findViewById<Button>(R.id.finish_Btn)?.setOnClickListener {
-            finish()
-        }
         dialog.setOnDismissListener{dialog: DialogInterface? ->
             finish()
         }
         dialog.show()
     }
     fun cancelDelivery(v:View){
-        db.document("customer/$phoneNumber").update("proccessCode",0)
+        db.document("customer/$phoneNumber").update("processCode",0)
             .addOnSuccessListener { result->
                 Toast.makeText(this,"Delivery is successfully cancelled", Toast.LENGTH_SHORT).show()
                 setResult(Activity.RESULT_OK,Intent())
@@ -85,11 +82,14 @@ class DelievererLocationTransmitter : AppCompatActivity() {
     fun displayDeliveryCompletionMessage(message:String): AlertDialog {
         val viewGroup = layoutInflater.inflate(R.layout.delivery_completion_message,null)
         viewGroup.findViewById<TextView>(R.id.completionMessage).setText(message)
-        return AlertDialog.Builder(this).setView(viewGroup).create()
+
+        return AlertDialog.Builder(this).setView(viewGroup).setPositiveButton("Finish")
+        {dialog, _ -> dialog.dismiss() }.create()
     }
     override fun onResume() {
         if(!(getSystemService(Context.LOCATION_SERVICE) as LocationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            findViewById<RippleBackground>(R.id.content).stopRippleAnimation()
+            if(findViewById<RippleBackground>(R.id.content).isRippleAnimationRunning)
+                findViewById<RippleBackground>(R.id.content).stopRippleAnimation()
             AlertDialog.Builder(this).setTitle("Your GPS is off")
                 .setMessage("Turn on your GPS to share your location live with your customer.Would you enable it now?")
                 .setPositiveButton("Sure") { dialog, which ->
@@ -97,7 +97,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
                     findViewById<RippleBackground>(R.id.content).startRippleAnimation()
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }.show()
-        }else
+        }else if(!findViewById<RippleBackground>(R.id.content).isRippleAnimationRunning)
             findViewById<RippleBackground>(R.id.content).startRippleAnimation()
         if( locationCallback != null)
             return
@@ -109,11 +109,9 @@ class DelievererLocationTransmitter : AppCompatActivity() {
         locationCallback  = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                disengageAvailabilityListener()
                 val lastPosition = LatLng(locationResult.lastLocation.latitude,locationResult.lastLocation.longitude)
-                db.document("customer/$phoneNumber")
-                    .update("delivererLocation", lastPosition
-                    ).addOnCompleteListener { result-> engageAvailabilityListener()}
+                db.document("delivererLocation/$phoneNumber")
+                    .update("location", lastPosition)
             }}
         Log.d("debufInfo","requestingUpdates")
         fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback,this.mainLooper)

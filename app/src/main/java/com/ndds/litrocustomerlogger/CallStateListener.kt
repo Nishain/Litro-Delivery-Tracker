@@ -5,22 +5,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.telephony.TelephonyManager
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Source
-import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -50,7 +39,6 @@ class CallStateListener() : BroadcastReceiver() {
                         addRequest(sharedPreference,recievedPhoneNumber,
                             address!!
                         )
-                        Log.d("debug","should start the activity!!")
                         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
                         if(keyguardManager.isKeyguardLocked()) {
                             sharedPreference.edit().putInt("lockScreenPopupState", 1).apply()
@@ -62,7 +50,7 @@ class CallStateListener() : BroadcastReceiver() {
                             )
                         }
                         else
-                        popAddressDialog(context,recievedPhoneNumber,address)
+                         PopupEngine().popAlertDialog(context,recievedPhoneNumber,address)
 
                         /*context.startActivity(
                             Intent(context,CustomerInfoPop::class.java).
@@ -90,9 +78,12 @@ class CallStateListener() : BroadcastReceiver() {
                     db.document("customer/$phoneNumberID").set(
                         hashMapOf(
                             "address" to address,
-                            "isAvailable" to true,
-                            "simNumbers" to arrayList.toTypedArray().toList()
+                            "simNumbers" to arrayList.toTypedArray().toList(),
+                            "isAvailable" to true
                         )
+                    )
+                    db.document("delivererLocation/$phoneNumberID").set(
+                        HashMap<String,String>()
                     )
                 }
             }
@@ -126,25 +117,5 @@ class CallStateListener() : BroadcastReceiver() {
                 .setContentText("You might have received deliverer order from customer").build()
         notificationManager.notify(20,notification)
     }
-    private fun popAddressDialog(context:Context, phoneNumber: String, address: String){
-        val dialog = AlertDialog.Builder(context).setMessage("Hello world!").create()
-        val window = dialog.window!!
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-        }else {
-            window.setType(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY)
-            window.addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                        or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-            )
-        }
-        window.setGravity(Gravity.TOP)
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val viewGroup: ViewGroup = LayoutInflater.from(context).inflate(R.layout.activity_customer_info_pop,null) as ViewGroup
-        viewGroup.findViewById<TextView>(R.id.customerNumberHint).text = "call from $phoneNumber"
-        viewGroup.findViewById<TextView>(R.id.customerAddressHint).text = "from address $address"
-        dialog.setView(viewGroup)
-        dialog.show()
-    }
+
 }

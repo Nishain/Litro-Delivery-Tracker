@@ -33,7 +33,7 @@ class SplashScreen : AppCompatActivity() {
             else
                 startActivity(Intent(this,ServeList::class.java))
             finish()
-        },400)
+        },1500)
 
     }
 }

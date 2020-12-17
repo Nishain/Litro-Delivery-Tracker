@@ -91,7 +91,6 @@
                         android:id="@+id/customer"
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
-                        android:checked="true"
                         android:text="Customer" />
 
                     <RadioButton

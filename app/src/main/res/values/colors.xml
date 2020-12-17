@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#2D2F8D</color>
     <color name="colorAccentLight">#447DF8</color>
+    <color name="splashColorLight">#08AFEA</color>
     <color name="colorAccent2">#03DAC5</color>
-    <color name="transparentBubbleColor">#879AB8F8</color>
+    <color name="transparentBubbleColor">#A108AFEA</color>
 </resources>

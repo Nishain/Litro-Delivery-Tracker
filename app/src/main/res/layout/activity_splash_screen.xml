@@ -57,14 +57,16 @@
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:background="@drawable/white_rec"
                 android:gravity="right"
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp"
                 android:paddingRight="5dp"
                 android:paddingBottom="10dp"
-                android:text="Home   Delivery App"
-                android:textColor="@android:color/black"
+                android:text="Home Delivery App"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -75,6 +77,7 @@
                 android:padding="5dp"
                 android:text="Home"
                 android:textColor="@android:color/white"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 tools:text="Home" />
 
@@ -95,14 +98,18 @@
             android:gravity="center_horizontal"
             android:text="Getting you ready! "
             android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="normal" />
 
         <ProgressBar
             android:id="@+id/loadSpinner"
             style="?android:attr/progressBarStyleHorizontal"
-            tools:indeterminateTint="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            tools:indeterminateTint="@android:color/white" />
 
     </LinearLayout>
 

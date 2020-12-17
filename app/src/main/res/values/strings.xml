@@ -4,10 +4,16 @@
     <item name="POSITION_KEY" type="id" />
     <item name="ADDRESS_KEY" type="id" />
     <string name="DelivererCompletionMessage">Now all that left to receive your pavement</string>
+    <string name="deliveryCancel" >Sorry, it seems like your deliverer cancelled your deliver</string>
     <string name="notificationBody">As long as this notification is visible we can enable our services</string>
     <string name="CustomerSuccessMessage">Hooray! you delivery just arrived! Check you gate now</string>
     <string name="noOrdersDelivered">There are no delivery request made on system.You can start by making a phone call to your deliverer and deliverer will place an order on system</string>
     <string name="NoOrderMessage"> You have no orders yet! To accept one, recieve a call from customer and add customer to the list.Where you can view them from here.</string>
     <string name="orderNotProcessed">Hold till you delievery get accepted and processed.We will let you know as once
     your delivery start to proccess.Keep this app alive to get notified as soon as your delivery in your door step</string>
+    <string name="additionPermissionRequiredMsg">We have discovered popup displaying caller\'s address failed to show up in your lock-screen when you received a call.
+        This may due to lack of permissions specific to this device but unfortunately we cannot request those permission automatically.You can go to settings and enable
+        other permissions in your settings</string>
+    <string name="credit_content">After spending a month I finally created this amazing application.And I would reserve credits for Henning Dodenhof (CircularView) and Yao Yu (Ripple background).
+    This app is built for delivering gas cylinders in Sri Lanka and enabling beloved people to track the location of the deliverer.Things all be initiated by traditional phone call</string>
 </resources>
