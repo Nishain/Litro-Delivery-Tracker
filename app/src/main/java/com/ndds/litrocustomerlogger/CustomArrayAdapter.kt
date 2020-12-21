@@ -2,6 +2,7 @@ package com.ndds.litrocustomerlogger
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,9 @@ import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 
-abstract class CustomArrayAdapter(context: Context, resource: Int, data:Array<String>) :
+abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<String>) :
     ArrayAdapter<String>(context, resource,data),View.OnClickListener {
-    var data:Array<String> = arrayOf()
+    var data:List<String> = mutableListOf<String>()
     private var db:FirebaseFirestore
     init {
         this.data = data
@@ -25,7 +26,7 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:Array<St
             onDataEmpty()
         return this.data.size
     }
-    fun refreshData(newData : Array<String>){
+    fun refreshData(newData : List<String>){
         this.data = newData
         notifyDataSetChanged()
     }
@@ -44,36 +45,27 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:Array<St
             newView.findViewById<View>(R.id.dismiss).setOnClickListener(this)
             return  newView
         }
-        return convertView!!
+        return convertView
     }
+
+
     abstract fun onNavigateToMap(phoneNumber : String,address:String)
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.acceptDelivery->{
-                db.document("customer/${v.getTag(R.id.PHONENUMBER_KEY)}").update("proccessCode",1)
-                    .addOnSuccessListener { e->
-                        Toast.makeText(context,"Delivery successfully accepted",Toast.LENGTH_SHORT).show()
-                        onNavigateToMap(v.getTag(R.id.PHONENUMBER_KEY) as String,v.getTag(R.id.ADDRESS_KEY) as String)
-
-                    }
+                onNavigateToMap(v.getTag(R.id.PHONENUMBER_KEY) as String,v.getTag(R.id.ADDRESS_KEY) as String)
             }
             R.id.dismiss->{
-                val removingItem = data[v.getTag(R.id.POSITION_KEY) as Int]
-                remove(v.getTag(R.id.POSITION_KEY) as Int)
-                onRemoveItem(removingItem)
+                val removingItem = getItem(v.getTag(R.id.POSITION_KEY) as Int)
+                Log.d("removong element at ${v.getTag(R.id.POSITION_KEY)}", removingItem.toString())
+                remove(removingItem)
                 notifyDataSetChanged()
+                onRemoveItem(removingItem!!)
             }
         }
 
     }
     abstract fun onRemoveItem(removedItem:String)
     abstract fun onDataEmpty()
-    fun remove( index: Int){
-        if (index < 0 || index >= data. size) {
-            return
-        }
-        val result = data.toMutableList()
-        result.removeAt(index)
-        data = result.toTypedArray()
-    }
+
 }

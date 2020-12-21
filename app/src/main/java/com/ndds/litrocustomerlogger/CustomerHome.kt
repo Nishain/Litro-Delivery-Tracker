@@ -75,16 +75,16 @@ class CustomerHome : AppCompatActivity() {
             }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         findViewById<Button>(R.id.backToMap).visibility = if(resultCode==555) View.GONE else View.VISIBLE
-        if(requestCode==555){
+        if(resultCode==555){
             Log.d("debug","code 555 executed!")
             /*FirebaseFirestore.getInstance().document("delivererLocation/$primaryPhoneNumber").delete()
             FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber").delete().addOnSuccessListener {
                 engageListener()
-            }*/
+            } or...*/
             engageListener()
 
         }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

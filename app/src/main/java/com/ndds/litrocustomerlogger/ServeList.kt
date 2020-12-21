@@ -33,9 +33,12 @@ class ServeList : AppCompatActivity() {
         sharedPreference = getSharedPreferences("localStorage", MODE_PRIVATE);
 
        dataList= sharedPreference.getStringSet("serveList", mutableSetOf<String>())!!
+        dataList.add("0770665281<.>Galle")
+        dataList.add("0770665281<.>Colobo")
+        dataList.add("0770665281<.>Kandy")
         val username = sharedPreference.getString("username","stranger")
         findViewById<TextView>(R.id.welcomeHint).setText("Welcome ${username?.capitalize()}")
-        adapter  = object:CustomArrayAdapter(this,R.layout.row_layout,dataList.toTypedArray()){
+        adapter  = object:CustomArrayAdapter(this,R.layout.row_layout,dataList.toMutableList()){
             override fun onNavigateToMap(phoneNumber: String,address:String) {
                 currentPhoneNumber = phoneNumber
                 currentAddress = address
@@ -46,7 +49,16 @@ class ServeList : AppCompatActivity() {
                             .putExtra("phoneNumber",result.documents[0].id)
                             .putExtra("address",address)
                             .putExtra("callingPhoneNumber",phoneNumber)
-                        startActivityForResult(launchIntent,456)
+                        FirebaseFirestore.getInstance().document("customer/${result.documents[0].id}").update(
+                            HashMap<String,Any>().apply {
+                                put("isAccepted",true)
+                                put("processCode",1)
+                            }
+                        ).addOnSuccessListener {
+                            Toast.makeText(context,"Delivery successfully accepted",Toast.LENGTH_SHORT).show()
+                            startActivityForResult(launchIntent,456)
+                        }
+
                     }else
                         Toast.makeText(this@ServeList,"Could not find customer phone number in system!",Toast.LENGTH_LONG).show()
                 }
@@ -54,25 +66,22 @@ class ServeList : AppCompatActivity() {
             }
 
             override fun onRemoveItem(removedItem: String) {
-                for(d in dataList){
-                    if(d==removedItem){
-                        dataList.remove(d)
-                        sharedPreference.edit().putStringSet("serveList",dataList).apply()
-                        break
-                    }
-                }
+                val sharedPreferenceSet = sharedPreference.getStringSet("serveList", mutableSetOf())
+                sharedPreferenceSet?.remove(removedItem)
+                sharedPreference.edit().putStringSet("serveList",sharedPreferenceSet).apply()
             }
 
             override fun onDataEmpty() {
                 findViewById<ViewGroup>(R.id.dataListContainer).visibility = View.GONE
             }
         }
+        findViewById<ListView>(R.id.serveList).adapter = adapter
         findViewById<Button>(R.id.backToTaskBtn).setOnClickListener { v->
             startActivityForResult(
                 getLaunchIntent(),456
             )
         }
-        findViewById<ListView>(R.id.serveList).adapter = adapter
+
     }
     fun getLaunchIntent():Intent{
         return launchIntent
@@ -98,7 +107,7 @@ class ServeList : AppCompatActivity() {
                         break
                     }
                 }
-                adapter.refreshData(dataList.toTypedArray())
+                adapter.refreshData(dataList.toMutableList())
                 findViewById<ListView>(R.id.serveList).adapter = adapter
         }else
             findViewById<Button>(R.id.backToTaskBtn).visibility = View.VISIBLE

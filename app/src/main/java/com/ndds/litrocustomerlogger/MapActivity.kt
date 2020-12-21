@@ -142,5 +142,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
              finish()
          }.create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
     }
 }
