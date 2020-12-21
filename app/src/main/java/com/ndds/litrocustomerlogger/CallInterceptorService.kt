@@ -4,12 +4,10 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
-import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.IBinder
-import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,22 +17,23 @@ import com.google.firebase.firestore.ListenerRegistration
 class CallInterceptorService : Service() {
     private lateinit var deliveryStatusListener: ListenerRegistration
     lateinit var  register:CallStateListener
+    val notificationID = "backgroundNotifications"
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent!=null && intent.hasExtra("terminateService")){
-            stopForeground(true)
-            return START_STICKY
+            stopSelf()
+            return START_NOT_STICKY
         }
 
         register = CallStateListener()
         registerReceiver(register, IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED))
 
-        val notificationID = "Call Interceptor Service"
+
         //creating the notification channel...
         val manager = getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 notificationID,
-                "Call Interceptor Service",
+                "background Notifications",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             if(manager.getNotificationChannel(notificationID)==null)
@@ -78,28 +77,52 @@ class CallInterceptorService : Service() {
             deliveryStatusListener = FirebaseFirestore.getInstance()
                 .document("customer/${intent.getStringExtra("phoneNumber")}")
                 .addSnapshotListener{snapshot, error ->
+                    if(!snapshot?.exists()!!) {
+                        deliveryStatusListener.remove()
+                        return@addSnapshotListener
+                    }
+                    Log.d("debug","service snapshot listener called")
                     var isDeliverySuccessfull = false
-                    if (!snapshot?.contains("processCode")!! || snapshot.get("processCode")!! as Long == 0L) {
+                    if(!snapshot.contains("processCode") || (snapshot.get("processCode") as Long) == 1L)
+                        return@addSnapshotListener
+                    if (snapshot.get("processCode")!! as Long == 0L) {
                         isDeliverySuccessfull = false
                     }
-                    if (snapshot?.get("processCode")!! as Long == 2L) {
+                    else if (snapshot.get("processCode")!! as Long == 2L) {
                         isDeliverySuccessfull = true
-                    }
+                    } else if((snapshot.get("processCode") as Long) == 1L)
+                        return@addSnapshotListener
                     val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                    val message = getString(if(isDeliverySuccessfull) R.string.CustomerSuccessMessage else R.string.deliveryCancel)
+                    val imageID = if(isDeliverySuccessfull)R.drawable.ic_check_circle_black_24dp else R.drawable.ic_error_black_24dp
+
+                    val manager = getSystemService(Activity.NOTIFICATION_SERVICE) as NotificationManager
+                    var builder: NotificationCompat.Builder
+                    if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.O)
+                        builder =  NotificationCompat.Builder(this, notificationID)
+                    else
+                        builder = NotificationCompat.Builder(this)
+                    val notification: Notification =  builder.setPriority(Notification.PRIORITY_HIGH)
+                        .setContentTitle("Your Delivery status has updated")
+                        .setSmallIcon(R.drawable.gas_cylinder)
+                        .setContentText(message).build()
+                    manager.notify(4,notification)
+
                     if(keyguardManager.isKeyguardLocked()) {
                         //if the screen is locked show and activity
                         val sharedPreference = getSharedPreferences("localStorage", Context.MODE_PRIVATE)
-                        val popActivityIntent = Intent(this, CustomerInfoPop::class.java)
+                        val popActivityIntent = Intent(this, BackgroundPopupHandler::class.java)
                             .putExtra("isUserCustomer", true)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .putExtra("messageType",if(isDeliverySuccessfull)1 else 0)
+                            .putExtra("completionMessage",message)
+                            .putExtra("messageIcon",imageID)
                         sharedPreference.edit().putInt("lockScreenPopupState", 1).apply()
+                        Log.d("debug","deice locked procced to open activity")
                         startActivity(
                             popActivityIntent
                         )
                     }else
-                        PopupEngine().popDelieveryCompletionAlert(this,
-                            getString(if(isDeliverySuccessfull) R.string.CustomerSuccessMessage else R.string.deliveryCancel))
+                        PopupEngine().popDelieveryCompletionAlert(this,message,imageID)
                     return@addSnapshotListener
                 }
             return null

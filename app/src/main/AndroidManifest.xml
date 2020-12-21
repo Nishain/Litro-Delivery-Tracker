@@ -38,7 +38,7 @@
         <activity android:name=".MapActivity" />
         <activity android:name=".ServeList" />
         <activity
-            android:name=".CustomerInfoPop"
+            android:name=".BackgroundPopupHandler"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/PopupTheme" />

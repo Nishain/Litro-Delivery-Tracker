@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONArray
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun test(v: View) {
-        startActivity(Intent(this, CustomerInfoPop::class.java))
+        startActivity(Intent(this, BackgroundPopupHandler::class.java))
     }
 
     fun test2(v: View) {
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    fun saveNumber(v: View) {
+    fun saveDetails(v: View) {
         val storage = getSharedPreferences("localStorage", Context.MODE_PRIVATE)
         var editText: EditText
 
@@ -94,9 +95,11 @@ class MainActivity : AppCompatActivity() {
             for (child in viewGroup.children) {
                 val number = child.findViewById<EditText>(R.id.phone_number).text.toString()
                 if (number.isEmpty()) {
+                    child.findViewById<TextInputEditText>(R.id.phone_number).error = "Field is empty"
                     showEmptyFieldError()
                     return
-                }
+                }else
+                    child.findViewById<TextInputEditText>(R.id.phone_number).error = ""
                 simNumbers.add("'$number'")
             }
 
@@ -107,10 +110,12 @@ class MainActivity : AppCompatActivity() {
         for (e in fields.entries) {
             editText = findViewById(e.key)
             if (editText.text.toString().isEmpty()) {
+                findViewById<TextInputEditText>(e.key).error= "Field is empty"
                 showEmptyFieldError()
                 return
             }
-
+            else
+                findViewById<TextInputEditText>(e.key).error= ""
             storage.edit().putString(e.value, editText.text.toString()).apply()
         }
 

@@ -19,7 +19,7 @@
         android:layout_marginTop="50dp"
         android:background="@drawable/round_border"
         android:orientation="vertical"
-        tools:context=".CustomerInfoPop">
+        tools:context=".BackgroundPopupHandler">
 
         <TextView
             android:id="@+id/customerNumberHint"
@@ -54,7 +54,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/statusIcon"
         android:layout_width="96dp"
         android:layout_height="88dp"
         android:layout_gravity="center_horizontal"

@@ -40,7 +40,7 @@ class DelievererLocationTransmitter : AppCompatActivity() {
     fun engageAvailabilityListener(){
         if(customerAvailabilityListener==null)
         customerAvailabilityListener = db.document("customer/$phoneNumber").addSnapshotListener{ snapshot, e ->
-            if(!snapshot?.contains("isAvailable")!! || !snapshot?.getBoolean("isAvailable")!!)
+            if(!snapshot?.contains("isAvailable")!! || !snapshot.getBoolean("isAvailable")!!)
                 findViewById<View>(R.id.availabilityHint).visibility = View.VISIBLE
             else
                 findViewById<View>(R.id.availabilityHint).visibility = View.GONE

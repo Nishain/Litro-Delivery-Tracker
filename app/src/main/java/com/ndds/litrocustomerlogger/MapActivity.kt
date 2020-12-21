@@ -4,11 +4,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -46,25 +50,35 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 foregroundServiceDisconnected = false
             }
+
+            override fun onBindingDied(name: ComponentName?) {
+                foregroundServiceDisconnected = true
+            }
         }
-        bindService(Intent(this,CallInterceptorService::class.java).putExtra("startListeningCompletionStatus",true),serviceConnection,Context.BIND_ABOVE_CLIENT)
+        bindService(Intent(this,CallInterceptorService::class.java)
+            .putExtra("startListeningCompletionStatus",true)
+            .putExtra("phoneNumber",phoneNumber)
+            ,serviceConnection,Context.BIND_ABOVE_CLIENT)
         statusChangeListener = db.document("customer/${phoneNumber}").addSnapshotListener{snapshot, error ->
-            if (!snapshot?.contains("processCode")!!) {
+            if (snapshot?.contains("processCode")!!) {
                 val processCode = snapshot.get("processCode")!! as Long
                 if(processCode==1L)
                     return@addSnapshotListener
-                val toastMessage = if(processCode==0L) "Your deliverer declined your delivery!"
+                /*val toastMessage = if(processCode==0L) "Your deliverer declined your delivery!"
                     else "That was already completed Delivery"
                 Toast.makeText(
                     this,
                     toastMessage,
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
                 if(foregroundServiceDisconnected)
                     displayDeliveryCompletionMessage(
                         getString(if (processCode==0L) R.string.deliveryCancel
-                            else R.string.CustomerSuccessMessage))
+                            else R.string.CustomerSuccessMessage),
+                        if (processCode==0L) R.drawable.ic_error_black_24dp else R.drawable.ic_check_circle_black_24dp
+                    )
                 else{
+                    Log.d("debug","called 555 end code")
                     setResult(555)
                     finish()
                 }
@@ -75,7 +89,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             .addSnapshotListener { snapshot, e ->
                 if(!snapshot?.contains("location")!!)
                     return@addSnapshotListener
-                val locationHashMap = snapshot?.get("location") as HashMap<String, Double>?
+                val locationHashMap = snapshot.get("location") as HashMap<String, Double>?
                 if (locationHashMap != null) {
                     val location =
                         LatLng(locationHashMap["latitude"]!!, locationHashMap["longitude"]!!)
@@ -94,7 +108,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     override fun onDestroy() {
-        Toast.makeText(this, "I'm destroying", Toast.LENGTH_SHORT).show()
         locationChangeListener.remove()
         statusChangeListener.remove()
         unbindService(serviceConnection)
@@ -106,7 +119,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(gm: GoogleMap?) {
-        Toast.makeText(this, "app restarted", Toast.LENGTH_SHORT).show()
         googleMap = gm
 
     }
@@ -119,13 +131,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(marker?.position, 18f))
     }
 
-    fun displayDeliveryCompletionMessage(message: String){
+    fun displayDeliveryCompletionMessage(message: String, imageID: Int){
         val viewGroup = layoutInflater.inflate(R.layout.delivery_completion_message, null)
         viewGroup.findViewById<TextView>(R.id.completionMessage).setText(message)
-         AlertDialog.Builder(this).setView(viewGroup).setPositiveButton("Finish"){dialog, which ->
-            dialog.dismiss()
+        viewGroup.findViewById<ImageView>(R.id.statusIcon).setImageResource(imageID)
+         val dialog = AlertDialog.Builder(this).setView(viewGroup).
+         setOnDismissListener { dialog ->
+             dialog.dismiss()
              setResult(555)
              finish()
-        }.show()
+         }.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 }

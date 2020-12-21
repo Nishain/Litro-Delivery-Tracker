@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -43,9 +44,15 @@ class CustomerHome : AppCompatActivity() {
         listener = FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber").addSnapshotListener{ value, error->
             if(value!=null && value.exists()) {
                 if (value.contains("isAccepted") && value.getBoolean("isAccepted")!!){
-                    listener?.remove()
-                    listener = null
-                    startActivityForResult(Intent(this, MapActivity::class.java).putExtra("phoneNumber",primaryPhoneNumber),897)
+                    if(value.getLong("processCode")==1L){
+                        listener?.remove()
+                        listener = null
+                        startActivityForResult(Intent(this, MapActivity::class.java).putExtra("phoneNumber",primaryPhoneNumber),897)
+                    }else
+                    {
+                        //code to remove
+                    }
+
                 }
             }else
                 findViewById<TextView>(R.id.customerWelcomeTxt).setText(R.string.orderNotProcessed)
@@ -61,12 +68,23 @@ class CustomerHome : AppCompatActivity() {
         }
         super.onResume()
     }
+    fun resetAcceptedCode(){
+        FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber")
+            .update("isAccepted",false).addOnSuccessListener {
+                engageListener()
+            }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         findViewById<Button>(R.id.backToMap).visibility = if(resultCode==555) View.GONE else View.VISIBLE
         if(requestCode==555){
-            FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber").delete()
-            FirebaseFirestore.getInstance().document("delivererLocation/$primaryPhoneNumber").delete()
+            Log.d("debug","code 555 executed!")
+            /*FirebaseFirestore.getInstance().document("delivererLocation/$primaryPhoneNumber").delete()
+            FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber").delete().addOnSuccessListener {
+                engageListener()
+            }*/
+            engageListener()
+
         }
     }
 }
