@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_register)
         requestPermission()
         initValues()
 
@@ -62,18 +62,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun test(v: View) {
-        startActivity(Intent(this, BackgroundPopupHandler::class.java))
+        startActivity(Intent(this, LockScreenPopup::class.java))
     }
 
     fun test2(v: View) {
-        startActivity(Intent(this, ServeList::class.java))
+        startActivity(Intent(this, DelivererHome::class.java))
     }
 
     fun navigateToMainScreen() {
         startActivity(
             Intent(
                 this,
-                if (isUserCustomer) CustomerHome::class.java else ServeList::class.java
+                if (isUserCustomer) CustomerHome::class.java else DelivererHome::class.java
             )
         )
     }

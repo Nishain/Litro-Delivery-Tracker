@@ -111,7 +111,7 @@ class CallInterceptorService : Service() {
                     if(keyguardManager.isKeyguardLocked()) {
                         //if the screen is locked show and activity
                         val sharedPreference = getSharedPreferences("localStorage", Context.MODE_PRIVATE)
-                        val popActivityIntent = Intent(this, BackgroundPopupHandler::class.java)
+                        val popActivityIntent = Intent(this, LockScreenPopup::class.java)
                             .putExtra("isUserCustomer", true)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .putExtra("completionMessage",message)

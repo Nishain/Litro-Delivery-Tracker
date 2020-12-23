@@ -36,9 +36,9 @@
             android:value="@string/google_api_key" />
 
         <activity android:name=".MapActivity" />
-        <activity android:name=".ServeList" />
+        <activity android:name=".DelivererHome" />
         <activity
-            android:name=".BackgroundPopupHandler"
+            android:name=".LockScreenPopup"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/PopupTheme" />

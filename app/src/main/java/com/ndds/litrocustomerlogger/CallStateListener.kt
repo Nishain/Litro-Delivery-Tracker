@@ -42,7 +42,7 @@ class CallStateListener() : BroadcastReceiver() {
                         if(keyguardManager.isKeyguardLocked()) {
                             sharedPreference.edit().putInt("lockScreenPopupState", 1).apply()
                             context.startActivity(
-                                Intent(context, BackgroundPopupHandler::class.java)
+                                Intent(context, LockScreenPopup::class.java)
                                     .putExtra("phone_number", recievedPhoneNumber)
                                     .putExtra("address", address)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -112,7 +112,7 @@ class CallStateListener() : BroadcastReceiver() {
                 .setSmallIcon(R.drawable.litro_icon)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(Notification.PRIORITY_HIGH)
-                .setFullScreenIntent(PendingIntent.getActivity(context,456,Intent(context,BackgroundPopupHandler::class.java),PendingIntent.FLAG_UPDATE_CURRENT),true)
+                .setFullScreenIntent(PendingIntent.getActivity(context,456,Intent(context,LockScreenPopup::class.java),PendingIntent.FLAG_UPDATE_CURRENT),true)
                 .setContentText("You might have received deliverer order from customer").build()
         notificationManager.notify(20,notification)
     }

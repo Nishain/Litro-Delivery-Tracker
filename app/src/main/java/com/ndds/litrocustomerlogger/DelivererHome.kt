@@ -1,13 +1,10 @@
 package com.ndds.litrocustomerlogger
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +13,8 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_customer_home.*
-import kotlinx.android.synthetic.main.row_layout.*
 
-class ServeList : AppCompatActivity() {
+class DelivererHome : AppCompatActivity() {
 
     private lateinit var launchIntent: Intent
     private lateinit var dataList: MutableSet<String>
@@ -29,13 +24,19 @@ class ServeList : AppCompatActivity() {
     private lateinit var sharedPreference:SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_serve_list)
+        setContentView(R.layout.activity_deliverer_home)
         sharedPreference = getSharedPreferences("localStorage", MODE_PRIVATE);
 
        dataList= sharedPreference.getStringSet("serveList", mutableSetOf<String>())!!
         dataList.add("0770665281<.>Galle")
         dataList.add("0770665281<.>Colobo")
         dataList.add("0770665281<.>Kandy")
+        dataList.add("0770665281<.>habanthota")
+        dataList.add("0770665281<.>kagalle")
+        dataList.add("0770665281<.>maharagama")
+        dataList.add("0770665281<.>nugegode")
+        dataList.add("0770665281<.>botagavia")
+        dataList.add("0770665281<.>jaffna")
         val username = sharedPreference.getString("username","stranger")
         findViewById<TextView>(R.id.welcomeHint).setText("Welcome ${username?.capitalize()}")
         adapter  = object:CustomArrayAdapter(this,R.layout.row_layout,dataList.toMutableList()){
@@ -60,15 +61,14 @@ class ServeList : AppCompatActivity() {
                         }
 
                     }else
-                        Toast.makeText(this@ServeList,"Could not find customer phone number in system!",Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@DelivererHome,"Could not find customer phone number in system!",Toast.LENGTH_LONG).show()
                 }
 
             }
 
             override fun onRemoveItem(removedItem: String) {
-                val sharedPreferenceSet = sharedPreference.getStringSet("serveList", mutableSetOf())
-                sharedPreferenceSet?.remove(removedItem)
-                sharedPreference.edit().putStringSet("serveList",sharedPreferenceSet).apply()
+                dataList.remove(removedItem)
+                sharedPreference.edit().putStringSet("serveList",dataList).apply()
             }
 
             override fun onDataEmpty() {
@@ -83,11 +83,15 @@ class ServeList : AppCompatActivity() {
         }
 
     }
+    fun viewCredits(v:View){
+        PopupEngine().showCredit(this)
+    }
     fun getLaunchIntent():Intent{
         return launchIntent
     }
     fun editProfile(v: View){
         startActivity(Intent(this,MainActivity::class.java))
+        finish()
     }
 
     override fun onResume() {

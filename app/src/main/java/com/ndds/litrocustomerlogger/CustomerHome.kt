@@ -74,6 +74,9 @@ class CustomerHome : AppCompatActivity() {
                 engageListener()
             }
     }
+    fun viewCredits(v:View){
+        PopupEngine().showCredit(this)
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         findViewById<Button>(R.id.backToMap).visibility = if(resultCode==555) View.GONE else View.VISIBLE
         if(resultCode==555){

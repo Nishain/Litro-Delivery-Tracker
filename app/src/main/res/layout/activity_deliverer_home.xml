@@ -6,20 +6,20 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccent"
     android:orientation="vertical"
-    tools:context=".ServeList">
+    tools:context=".DelivererHome">
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="43dp"
+        android:orientation="horizontal"
         android:paddingTop="10dp">
 
         <TextView
             android:id="@+id/welcomeHint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="center"
-            android:padding="5dp"
             android:text="TextView"
             android:textColor="@android:color/white"
             android:textSize="20dp"
@@ -36,19 +36,18 @@
             android:layout_weight="0"
             android:background="@drawable/white_circle"
             android:onClick="editProfile"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/edit_profile" />
 
-    </TableRow>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Customer List"
-        android:textColor="@android:color/white" />
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:onClick="viewCredits"
+        android:text="Credit" />
 
     <FrameLayout
         android:id="@+id/dataListContainer"
@@ -58,9 +57,10 @@
 
         <ListView
             android:id="@+id/serveList"
-            android:layout_width="409dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
+            android:background="@drawable/top_round_white_rec"
+            android:padding="10dp"
             android:visibility="visible">
 
         </ListView>

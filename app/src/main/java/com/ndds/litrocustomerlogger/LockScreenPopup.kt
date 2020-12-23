@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 
-class BackgroundPopupHandler : AppCompatActivity() {
+class LockScreenPopup : AppCompatActivity() {
     private var phoneNumber =  "1234567"//intent.getStringExtra("phone_number")
     private var address = "example address 2"//intent.getStringExtra("address")
     override fun onCreate(savedInstanceState: Bundle?) {

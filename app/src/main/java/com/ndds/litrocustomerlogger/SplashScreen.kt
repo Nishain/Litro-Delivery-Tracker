@@ -1,18 +1,12 @@
 package com.ndds.litrocustomerlogger
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import kotlin.reflect.typeOf
 
 
 class SplashScreen : AppCompatActivity() {
@@ -31,7 +25,7 @@ class SplashScreen : AppCompatActivity() {
             else if(sharedPreferences.getBoolean("isUserCustomer",true))
                 startActivity(Intent(this,CustomerHome::class.java))
             else
-                startActivity(Intent(this,ServeList::class.java))
+                startActivity(Intent(this,DelivererHome::class.java))
             finish()
         },1500)
 

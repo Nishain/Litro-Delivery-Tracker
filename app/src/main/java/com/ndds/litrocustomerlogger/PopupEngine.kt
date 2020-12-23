@@ -40,9 +40,7 @@ class PopupEngine {
         dialog.setView(viewGroup)
         dialog.show()
     }
-    fun popHeadsUpNotification(){
 
-    }
     fun popDelieveryCompletionAlert(context: Context,message:String,imageID : Int) {
 
         val viewGroup: ViewGroup = LayoutInflater.from(context).
@@ -89,5 +87,6 @@ class PopupEngine {
             dialog.dismiss()
         }
         dialog.setView(creditWindow)
+        dialog.show()
     }
 }

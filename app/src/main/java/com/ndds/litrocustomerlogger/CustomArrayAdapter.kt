@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<String>) :
     ArrayAdapter<String>(context, resource,data),View.OnClickListener {
+    private var deletedPosition: Int = -2
     var data:List<String> = mutableListOf<String>()
     private var db:FirebaseFirestore
     init {
@@ -31,7 +32,8 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
         notifyDataSetChanged()
     }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        if(convertView==null){
+        //val position = (data.size-1) - pos
+        if(convertView==null || (deletedPosition!=-2 && position>=deletedPosition)){
             val columns = data[position].split("<.>")
             val newView= LayoutInflater.from(context).inflate(R.layout.row_layout,null) as ViewGroup
             newView.findViewById<TextView>(R.id.phoneNumber).text = columns[0]
@@ -48,7 +50,6 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
         return convertView
     }
 
-
     abstract fun onNavigateToMap(phoneNumber : String,address:String)
     override fun onClick(v: View?) {
         when(v?.id){
@@ -56,8 +57,8 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
                 onNavigateToMap(v.getTag(R.id.PHONENUMBER_KEY) as String,v.getTag(R.id.ADDRESS_KEY) as String)
             }
             R.id.dismiss->{
-                val removingItem = getItem(v.getTag(R.id.POSITION_KEY) as Int)
-                Log.d("removong element at ${v.getTag(R.id.POSITION_KEY)}", removingItem.toString())
+                deletedPosition = v.getTag(R.id.POSITION_KEY) as Int
+                val removingItem = getItem(deletedPosition)
                 remove(removingItem)
                 notifyDataSetChanged()
                 onRemoveItem(removingItem!!)
