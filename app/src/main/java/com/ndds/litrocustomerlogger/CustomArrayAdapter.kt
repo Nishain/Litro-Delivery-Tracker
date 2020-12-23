@@ -1,16 +1,14 @@
 package com.ndds.litrocustomerlogger
 
+import CollapseAnimation
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import com.google.firebase.FirebaseApp
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
+import android.widget.*
 import com.google.firebase.firestore.FirebaseFirestore
 
 abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<String>) :
@@ -34,6 +32,8 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         //val position = (data.size-1) - pos
         if(convertView==null || (deletedPosition!=-2 && position>=deletedPosition)){
+            if(position==data.size-1)
+                deletedPosition = -2
             val columns = data[position].split("<.>")
             val newView= LayoutInflater.from(context).inflate(R.layout.row_layout,null) as ViewGroup
             newView.findViewById<TextView>(R.id.phoneNumber).text = columns[0]
@@ -57,11 +57,32 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
                 onNavigateToMap(v.getTag(R.id.PHONENUMBER_KEY) as String,v.getTag(R.id.ADDRESS_KEY) as String)
             }
             R.id.dismiss->{
-                deletedPosition = v.getTag(R.id.POSITION_KEY) as Int
-                val removingItem = getItem(deletedPosition)
-                remove(removingItem)
-                notifyDataSetChanged()
-                onRemoveItem(removingItem!!)
+                val parent = v.parent.parent.parent as ViewGroup
+                val collapseAnimation1 = CollapseAnimation(parent)
+
+                collapseAnimation1.duration = 500
+                collapseAnimation1.setAnimationListener(object : Animation.AnimationListener{
+                    override fun onAnimationRepeat(animation: Animation?) {
+                    }
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        if(collapseAnimation1.phase==1) {
+                            collapseAnimation1.phase = 2
+                            parent.startAnimation(collapseAnimation1)
+                        }else{
+                            deletedPosition = v.getTag(R.id.POSITION_KEY) as Int
+                       val removingItem = getItem(deletedPosition)
+                       remove(removingItem)
+                       notifyDataSetChanged()
+                       onRemoveItem(removingItem!!)
+                        }
+                    }
+
+                    override fun onAnimationStart(animation: Animation?) {
+
+                    }
+                })
+                parent.startAnimation(collapseAnimation1)
             }
         }
 
@@ -70,3 +91,5 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
     abstract fun onDataEmpty()
 
 }
+
+
