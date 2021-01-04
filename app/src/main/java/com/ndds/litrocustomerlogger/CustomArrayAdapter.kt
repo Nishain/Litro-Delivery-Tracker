@@ -71,10 +71,10 @@ abstract class CustomArrayAdapter(context: Context, resource: Int, data:List<Str
                             parent.startAnimation(collapseAnimation1)
                         }else{
                             deletedPosition = v.getTag(R.id.POSITION_KEY) as Int
-                       val removingItem = getItem(deletedPosition)
-                       remove(removingItem)
-                       notifyDataSetChanged()
-                       onRemoveItem(removingItem!!)
+                               val removingItem = getItem(deletedPosition)
+                               remove(removingItem)
+                               notifyDataSetChanged()
+                               onRemoveItem(removingItem!!)
                         }
                     }
 

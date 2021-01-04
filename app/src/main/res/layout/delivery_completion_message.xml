@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="20dp"
     android:background="@drawable/round_border_blue_rec">
 
@@ -34,13 +35,32 @@
             android:text="Click outside to dismiss" />
 
     </LinearLayout>
+    <FrameLayout
 
-    <ImageView
-        android:id="@+id/statusIcon"
-        android:layout_width="96dp"
-        android:layout_height="88dp"
         android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/white_circle"
-        android:src="@drawable/ic_check_circle_black_24dp" />
+       >
+
+        <ImageView
+            android:foregroundGravity="center"
+            android:layout_width="96dp"
+            android:layout_height="88dp"
+            android:padding="5dp"
+            android:background="@drawable/white_circle"
+            android:src="@drawable/bell" />
+
+        <ImageView
+            android:id="@+id/statusIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"
+            android:background="@drawable/white_circle"
+            android:src="@drawable/ic_check_circle_black_24dp" />
+    </FrameLayout>
+
+
 
 </FrameLayout>

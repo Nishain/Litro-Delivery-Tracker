@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.view.marginTop
+import com.skyfishjy.library.RippleBackground
 
 class PopupEngine {
       fun popAlertDialog(context: Context, phoneNumber: String, address: String){
@@ -84,9 +85,11 @@ class PopupEngine {
         val creditWindow = LayoutInflater.from(context)
             .inflate(R.layout.credits,null) as ViewGroup
         creditWindow.findViewById<Button>(R.id.endCredit).setOnClickListener{v: View? ->
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.dismiss()
         }
         dialog.setView(creditWindow)
+        creditWindow.findViewById<RippleBackground>(R.id.creditRipple).startRippleAnimation()
         dialog.show()
     }
 }

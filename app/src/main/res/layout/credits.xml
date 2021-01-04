@@ -2,39 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:gravity="center"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/round_border_white_rec"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:background="@drawable/white_rec"
-    android:layout_height="match_parent">
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:civ_border_width="7dp"
-        app:civ_border_color="@color/colorAccentLight"
-        android:src="@drawable/credit_profile"/>
+    android:padding="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center">
+
+        <com.skyfishjy.library.RippleBackground
+            android:id="@+id/creditRipple"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rb_color="@color/colorAccentLight"
+            app:rb_radius="105dp"
+            app:rb_strokeWidth="4dp"
+            app:rb_rippleAmount="8"
+            app:rb_duration="4000"
+            app:rb_type="strokeRipple">
+        </com.skyfishjy.library.RippleBackground>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+            <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/credit_profile" />
+        </LinearLayout>
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Created By Nishain De Silva"
-        android:textColor="@android:color/black"
-        android:textSize="25sp"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="252dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/credit_content"
-        android:textColor="@android:color/black" />
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/endCredit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cool!"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Created By Nishain De Silva"
+            android:textColor="@android:color/black"
+            android:textSize="25sp"
+            tools:layout_editor_absoluteX="121dp"
+            tools:layout_editor_absoluteY="252dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/credit_content"
+            android:textColor="@android:color/black" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/endCredit"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cool!" />
+    </LinearLayout>
+
 </LinearLayout>

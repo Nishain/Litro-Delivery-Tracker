@@ -11,14 +11,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="+94"
+        android:textColor="@android:color/black"
         android:textSize="18sp" />
+
+    <View
+        android:id="@+id/divider6"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:background="@android:color/black" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phone_number_container"
         style="@style/My.TextInputLayout.FilledBox.Padding"
-        android:layout_width="233dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         app:endIconMode="clear_text"
         app:hintEnabled="false">
 
@@ -35,9 +42,10 @@
 
     <ImageView
         android:id="@+id/removeNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="26dp"
+        android:layout_height="40dp"
         android:layout_gravity="center_vertical"
-        app:srcCompat="@android:drawable/ic_delete" />
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/cancel" />
 
 </TableRow>

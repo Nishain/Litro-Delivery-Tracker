@@ -48,6 +48,11 @@ class MainActivity : AppCompatActivity() {
             val isCustomer = checkedID == R.id.customer
             findViewById<ViewGroup>(R.id.customerControls).visibility =
                 if (isCustomer) View.VISIBLE else View.GONE
+
+            if(isCustomer){
+                if(findViewById<ViewGroup>(R.id.simPhoneNumberGroup).childCount == 0)
+                    createEmptyPhoneNumberFields(findViewById<ViewGroup>(R.id.simPhoneNumberGroup) )
+            }
         }
         findViewById<Button>(R.id.addSimNumberBtn).setOnClickListener { v ->
             val phoneNumberGroup = findViewById<ViewGroup>(R.id.simPhoneNumberGroup)
@@ -59,15 +64,11 @@ class MainActivity : AppCompatActivity() {
                 println("incomingNumber : $incomingNumber")
             }
         }, PhoneStateListener.LISTEN_CALL_STATE)*/
+        findViewById<View>(R.id.register_home).visibility =
+            if(getSharedPreferences("localStorage", Context.MODE_PRIVATE).contains("isUserCustomer"))
+                View.VISIBLE else View.GONE
     }
 
-    fun test(v: View) {
-        startActivity(Intent(this, LockScreenPopup::class.java))
-    }
-
-    fun test2(v: View) {
-        startActivity(Intent(this, DelivererHome::class.java))
-    }
 
     fun navigateToMainScreen() {
         startActivity(
@@ -95,7 +96,6 @@ class MainActivity : AppCompatActivity() {
             for (child in viewGroup.children) {
                 val number = child.findViewById<EditText>(R.id.phone_number).text.toString()
                 if (number.isEmpty()) {
-                    child.findViewById<TextInputEditText>(R.id.phone_number).error = "Field is empty"
                     showEmptyFieldError()
                     return
                 }else
@@ -110,7 +110,6 @@ class MainActivity : AppCompatActivity() {
         for (e in fields.entries) {
             editText = findViewById(e.key)
             if (editText.text.toString().isEmpty()) {
-                findViewById<TextInputEditText>(e.key).error= "Field is empty"
                 showEmptyFieldError()
                 return
             }

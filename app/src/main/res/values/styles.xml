@@ -10,6 +10,7 @@
     </style>
 
     <style name="My.TextInputLayout.FilledBox.Padding" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="editTextColor">@android:color/white</item>
         <item name="materialThemeOverlay">@style/MyThemeOverlayFilledPadding</item>
     </style>
 
@@ -20,6 +21,7 @@
     <style name="MyTextInputEditText_filledBox_padding" parent="@style/Widget.MaterialComponents.TextInputEditText.FilledBox">
         <item name="android:paddingTop">1dp</item>
         <item name="android:paddingBottom">1dp</item>
+        <item name="backgroundTint">@android:color/white</item>
     </style>
 
     <style name="PopupTheme" parent="Theme.AppCompat.Light.Dialog.Alert">

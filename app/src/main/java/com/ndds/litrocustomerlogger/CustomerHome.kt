@@ -50,7 +50,8 @@ class CustomerHome : AppCompatActivity() {
                         startActivityForResult(Intent(this, MapActivity::class.java).putExtra("phoneNumber",primaryPhoneNumber),897)
                     }else
                     {
-                        //code to remove
+                        FirebaseFirestore.getInstance().document("delivererLocation/$primaryPhoneNumber").delete()
+                        FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber").delete()
                     }
 
                 }
@@ -68,25 +69,16 @@ class CustomerHome : AppCompatActivity() {
         }
         super.onResume()
     }
-    fun resetAcceptedCode(){
-        FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber")
-            .update("isAccepted",false).addOnSuccessListener {
-                engageListener()
-            }
-    }
     fun viewCredits(v:View){
         PopupEngine().showCredit(this)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         findViewById<Button>(R.id.backToMap).visibility = if(resultCode==555) View.GONE else View.VISIBLE
         if(resultCode==555){
-            Log.d("debug","code 555 executed!")
-            /*FirebaseFirestore.getInstance().document("delivererLocation/$primaryPhoneNumber").delete()
+            FirebaseFirestore.getInstance().document("delivererLocation/$primaryPhoneNumber").delete()
             FirebaseFirestore.getInstance().document("customer/$primaryPhoneNumber").delete().addOnSuccessListener {
                 engageListener()
-            } or...*/
-            engageListener()
-
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
